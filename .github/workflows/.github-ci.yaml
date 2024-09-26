@@ -36,7 +36,7 @@ jobs:
         APP_NAME="container-k8s-hub"
         APP_VERSION="2.0.0"
         tag="${APP_NAME}:${APP_VERSION}"
-        docker save "ghcr.io/${{ github.repository }}/${tag}" -o "${APP_NAME}_${APP_VERSION}.tar"
+        docker save "ghcr.io/eoepca/container-k8s-hub/${tag}" -o "${APP_NAME}_${APP_VERSION}.tar"
         tar -czf "${APP_NAME}_${APP_VERSION}.tar.gz" "${APP_NAME}_${APP_VERSION}.tar"
 
     # Step 5: Upload Docker Image tar.gz as an artifact
@@ -53,7 +53,7 @@ jobs:
         APP_VERSION="2.0.0"
         tag="${APP_NAME}:${APP_VERSION}"
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL,UNKNOWN --format table "ghcr.io/${{ github.repository }}/${tag}"
+        trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL,UNKNOWN --format table "ghcr.io/eoepca/container-k8s-hub/${tag}"
 
   deploy:
     needs: build
@@ -89,5 +89,5 @@ jobs:
         APP_NAME="container-k8s-hub"
         APP_VERSION="2.0.0"
         tag="${APP_NAME}:${APP_VERSION}"
-        docker push "ghcr.io/${{ github.repository }}/${tag}
+        docker push "ghcr.io/eoepca/container-k8s-hub/${tag}"
         
