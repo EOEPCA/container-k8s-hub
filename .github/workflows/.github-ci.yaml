@@ -21,7 +21,6 @@ jobs:
         sudo apt-get update -y
         sudo apt-get install -y trivy
 
-
     # Step 3: Build Docker Image
     - name: Build Docker Image
       run: |
@@ -29,4 +28,66 @@ jobs:
         APP_VERSION="2.0.0"
         tag="${APP_NAME}:${APP_VERSION}"
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        echo "${{ github.repository }}"
+        docker build -t "ghcr.io/${{ github.repository }}/${tag}" --file Dockerfile .
+
+    # Step 4: Save Docker Image as tar.gz
+    - name: Save Docker Image as tar.gz
+      run: |
+        APP_NAME="container-k8s-hub"
+        APP_VERSION="2.0.0"
+        tag="${APP_NAME}:${APP_VERSION}"
+        docker save "ghcr.io/${{ github.repository }}/${tag}" -o "${APP_NAME}_${APP_VERSION}.tar"
+        tar -czf "${APP_NAME}_${APP_VERSION}.tar.gz" "${APP_NAME}_${APP_VERSION}.tar"
+
+    # Step 5: Upload Docker Image tar.gz as an artifact
+    - name: Upload Docker Image Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: docker-image-tar
+        path: container-k8s-hub_2.0.0.tar.gz
+
+    # Step 6: Scan Docker Image with Trivy
+    - name: Scan Docker Image with Trivy
+      run: |
+        APP_NAME="container-k8s-hub"
+        APP_VERSION="2.0.0"
+        tag="${APP_NAME}:${APP_VERSION}"
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        trivy image --no-progress --exit-code 1 --severity HIGH,CRITICAL,UNKNOWN --format table "ghcr.io/${{ github.repository }}/${tag}"
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    # Step 1: Checkout repository
+    - uses: actions/checkout@v4
+
+    # Step 2: Download Docker Image tar.gz Artifact
+    - name: Download Docker Image Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: docker-image-tar
+
+    # Step 3: Extract the Docker Image tar.gz
+    - name: Extract Docker Image tar.gz
+      run: |
+        tar -xzf container-k8s-hub_2.0.0.tar.gz
+
+    # Step 4: Load Docker Image
+    - name: Load Docker Image
+      run: |
+        docker load -i container-k8s-hub_2.0.0.tar
+
+    # Step 5: Log in to Docker Registry (use GitHub secrets for security)
+    - name: Login to Docker Registry
+      run: |
+        echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin  
+
+    # Step 6: Push Docker Image to Registry
+    - name: Push Docker Image to Registry
+      run: |
+        APP_NAME="container-k8s-hub"
+        APP_VERSION="2.0.0"
+        tag="${APP_NAME}:${APP_VERSION}"
+        docker push "ghcr.io/${{ github.repository }}/${tag}
+        
