@@ -28,7 +28,7 @@ jobs:
         APP_VERSION="2.0.0"
         tag="${APP_NAME}:${APP_VERSION}"
         echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-        docker build -t "ghcr.io/${{ github.repository }}/${tag}" --file Dockerfile .
+        docker build -t "ghcr.io/eoepca/container-k8s-hub/${tag}" --file Dockerfile .
 
     # Step 4: Save Docker Image as tar.gz
     - name: Save Docker Image as tar.gz
