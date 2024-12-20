@@ -2,7 +2,7 @@ name: Build, Test, and Deploy Docker Image
 
 on:
   push:
-    branches: [main]
+    branches: [4.0.0]
 
 jobs:
   build:
@@ -34,7 +34,7 @@ jobs:
     - name: Save Docker Image as tar.gz
       run: |
         APP_NAME="container-k8s-hub"
-        APP_VERSION="2.0.0"
+        APP_VERSION="4.0.0"
         tag="${APP_NAME}:${APP_VERSION}"
         docker save "ghcr.io/eoepca/container-k8s-hub/${tag}" -o "${APP_NAME}_${APP_VERSION}.tar"
         tar -czf "${APP_NAME}_${APP_VERSION}.tar.gz" "${APP_NAME}_${APP_VERSION}.tar"
@@ -71,12 +71,12 @@ jobs:
     # Step 3: Extract the Docker Image tar.gz
     - name: Extract Docker Image tar.gz
       run: |
-        tar -xzf container-k8s-hub_2.0.0.tar.gz
+        tar -xzf container-k8s-hub_4.0.0.tar.gz
 
     # Step 4: Load Docker Image
     - name: Load Docker Image
       run: |
-        docker load -i container-k8s-hub_2.0.0.tar
+        docker load -i container-k8s-hub_4.0.0.tar
 
     # Step 5: Log in to Docker Registry (use GitHub secrets for security)
     - name: Login to Docker Registry
@@ -87,7 +87,7 @@ jobs:
     - name: Push Docker Image to Registry
       run: |
         APP_NAME="container-k8s-hub"
-        APP_VERSION="2.0.0"
+        APP_VERSION="4.0.0"
         tag="${APP_NAME}:${APP_VERSION}"
         docker push "ghcr.io/eoepca/container-k8s-hub/${tag}"
         
