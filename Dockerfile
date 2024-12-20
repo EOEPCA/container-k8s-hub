@@ -1,5 +1,5 @@
 # The build stage
-FROM rockylinux:9.3-minimal as build-stage
+FROM rockylinux:9.3-minimal AS build-stage
 
 WORKDIR /build-stage
 
