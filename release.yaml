@@ -1,0 +1,4 @@
+image_name: container-k8s-hub
+image_prefix: eoepca
+image_version: 4.0.0
+image_registry: ghcr.io
