@@ -7,7 +7,7 @@ WORKDIR /build-stage
 ARG PIP_CACHE_DIR=/tmp/pip-cache
 
 # Install Python and pip
-RUN microdnf install -y python39 python3-pip libcurl-devel gcc gcc-c++ python3-devel openssl-devel && \
+RUN microdnf install -y python312 python3-pip libcurl-devel gcc gcc-c++ python3-devel openssl-devel && \
     pip3 install wheel && \
     microdnf clean all
 
@@ -15,7 +15,7 @@ RUN microdnf install -y python39 python3-pip libcurl-devel gcc gcc-c++ python3-d
 COPY requirements.txt requirements.txt
 RUN --mount=type=cache,target=${PIP_CACHE_DIR} \
     pip3 install build \
-    && pip3 wheel -r requirements.txt
+    && pip3 install -r requirements.txt
 
 # The final stage
 FROM rockylinux:9.3-minimal
@@ -28,7 +28,7 @@ RUN useradd -m -u ${NB_UID} ${NB_USER}
 
 # Install required packages
 RUN microdnf update -y && microdnf upgrade -y && microdnf install -y \
-        python39 \
+        python312 \
         python3-pip \
         curl \
         bind-utils \
