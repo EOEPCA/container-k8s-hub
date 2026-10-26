@@ -39,7 +39,7 @@ MarkupSafe==3.0.2
 multidict==6.1.0
 mwoauth==0.4.0
 oauthenticator==17.4.0
-oauthlib==3.2.2
+oauthlib==4.0.0
 onetimepass==1.0.1
 packaging==24.1
 pamela==1.2.0
