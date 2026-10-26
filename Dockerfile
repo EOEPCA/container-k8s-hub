@@ -9,7 +9,7 @@ RUN microdnf update -y && microdnf install -y \
         libcurl-devel gcc gcc-c++ openssl-devel && \
     microdnf clean all && \
     /usr/bin/python3.12 -m venv /opt/hub-venv
-ENV PATH=/opt/hub-venv/bin:${PATH}
+ENV PATH=/opt/hub-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 RUN python3 -m pip install --no-cache-dir --upgrade \
     'pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70' && \
     python3 -m pip install --no-cache-dir 'uv==0.13.4'
@@ -31,14 +31,14 @@ RUN microdnf update -y && microdnf install -y \
         curl bind-utils git less vim libcurl sqlite shadow-utils && \
     microdnf clean all && \
     /usr/bin/python3.12 -m venv --without-pip /opt/hub-venv
-ENV PATH=/opt/hub-venv/bin:${PATH}
+ENV PATH=/opt/hub-venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 COPY --from=build-stage /opt/hub-venv/bin/uv /usr/local/bin/uv
 ENV UV_SYSTEM_CERTS=true
 ENV UV_CONSTRAINT=/opt/python-security/python-constraints.txt
 ENV UV_NO_CACHE=true
 
 # Python RPMs include an ensurepip seed wheel; omit pip from the runtime entirely.
-RUN rm -f /usr/share/python-wheels/pip-*.whl
+RUN rm -f /usr/share/python-wheels/pip-*.whl /usr/share/python3-wheels/pip-*.whl
 
 RUN useradd -m -u ${NB_UID} ${NB_USER}
 
