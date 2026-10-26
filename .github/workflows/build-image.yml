@@ -86,14 +86,15 @@ jobs:
           args: >
             --context .
             --dockerfile Dockerfile
+            --cache=false
             --no-push
             --tar-path image.tar
 
       # --------------------------------------------------------
-      # Trivy scan (relaxed for now)
+      # Trivy scan (block high and critical findings)
       # --------------------------------------------------------
-      - name: Trivy scan (debug mode)
-        uses: docker://aquasec/trivy:0.50.2
+      - name: Trivy scan (high and critical)
+        uses: docker://aquasec/trivy:0.76.1
         env:
           TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db
         with:
@@ -101,11 +102,11 @@ jobs:
             image
             --input image.tar
             --severity HIGH,CRITICAL
-            --exit-code 0
+            --exit-code 1
             --no-progress
 
       - name: Generate SBOM (SPDX JSON)
-        uses: docker://aquasec/trivy:0.50.2
+        uses: docker://aquasec/trivy:0.76.1
         env:
           TRIVY_DB_REPOSITORY: ghcr.io/aquasecurity/trivy-db
         with:
