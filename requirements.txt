@@ -45,7 +45,7 @@ packaging==24.1
 pamela==1.2.0
 prometheus_client==0.21.0
 propcache==0.4.1
-py-spy==0.4.0
+py-spy==0.4.2
 pyasn1==0.6.4
 pyasn1_modules==0.4.1
 pycparser==2.22
